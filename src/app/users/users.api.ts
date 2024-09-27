@@ -1,5 +1,6 @@
+import { env } from "process";
 
-const URL = 'http://workplan.digitalplace.cu:4000/api/users'
+const URL = `${env.BACKEND_URL}/api/users`;
 
 export async function getUsers() {
     const data = await fetch(`${URL}`, {

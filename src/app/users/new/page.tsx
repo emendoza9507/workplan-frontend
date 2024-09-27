@@ -10,7 +10,7 @@ import { UserForm } from "./user-form"
 
 export default function UserNewPage() {
     return (
-        <div className="h-screen flex justify-center items-center">
+        <div className="flex justify-center items-center">
             <Card className="w-[450px]">
                 <CardHeader>
                     <CardTitle className="text-xl uppercase">
