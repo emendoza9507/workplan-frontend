@@ -5,6 +5,7 @@ export async function getUsers() {
     const data = await fetch(`${URL}`, {
         cache: "no-cache"
     });
+
     return await data.json();
 }
 
