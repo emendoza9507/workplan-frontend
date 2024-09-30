@@ -80,3 +80,11 @@
     @apply bg-background text-foreground no-scrollbar;
   }
 }
+
+.sameRemitent:not(:first-child) .remitent  {
+  display: none;
+}
+
+.sameRemitent:not(:first-child) img {
+  opacity: 0;
+}
