@@ -3,7 +3,7 @@ import { User } from "@/types/user";
 import Cookies from "js-cookie";
 
 export const useLogin = () => {
-    const login = async (username: string, password: string) => {
+    const login = async (username: string, password: string, callback: () => void = () => null) => {
         const user = await authService.login(username, password);
         if(user) {
             Cookies.set("currentUser", JSON.stringify(user));

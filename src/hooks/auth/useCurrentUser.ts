@@ -3,8 +3,8 @@ import { User } from "@/types/user"
 import Cookies from "js-cookie"
 import { useEffect, useState } from "react"
 
-export const useCurrentUser = () => {
-    const [user, setUser] = useState<User | null>();
+export const useCurrentUser = (): { user: User | undefined, refetchUser: (userId: string) => void } => {
+    const [user, setUser] = useState<User>();
 
     useEffect(() => {
         const currentUser = Cookies.get("currentUser");
@@ -16,5 +16,10 @@ export const useCurrentUser = () => {
 
     const refetchUser = async (userId: string) => {
         const userInfo = await authService.getMe(userId)
+        const newUser = {...user, ...userInfo};
+        Cookies.set("currentUser", JSON.stringify(newUser));
+        setUser(newUser)
     }
+
+    return {user, refetchUser}
 }

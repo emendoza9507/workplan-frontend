@@ -1,4 +1,5 @@
 import { getAuthorizationHeader } from "@/lib/utils"
+import { User } from "@/types/user"
 
 export default class AuthSerice {
     public constructor(private url: string) {
@@ -7,21 +8,45 @@ export default class AuthSerice {
 
     login = (username: string, password: string) => {
         return fetch(`${this.url}/api/auth/login`, {
+            headers:  {
+                'Content-Type': 'application/json'
+            },
             method: 'POST',
             body: JSON.stringify({username, password})
         }).then(res => res.json())
         .then(res => {
+            const { access_token, ...rest } = res
+
+            if(!access_token) {
+                return undefined;
+            }
+
             return {
-                access_token: res.access_token,                
+                access_token,
+                ...rest                
             }
         })
     }
 
     getMe = (userId: string) => {
         return fetch(`${this.url}/api/users/${userId}`, {
-            headers: getAuthorizationHeader()
+            headers: {
+                'Content-Type': 'application/json',
+                ...getAuthorizationHeader()
+            },
         })
         .then(res => res.json());
+    }
+
+    updateProfile(userId: string, data: User) {
+        return fetch(`${this.url}/api/users/${userId}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                ...getAuthorizationHeader()
+            },
+            body: JSON.stringify(data)
+        }).then(res => res.json())
     }
 
     uploadProfileImage = (userId: string, newProfileImage: File) => {
@@ -30,7 +55,10 @@ export default class AuthSerice {
 
         return fetch(`${this.url}/api/users/${userId}/upload`, {
             method: 'POST',
-            headers: getAuthorizationHeader(),
+            headers: {
+                'Content-Type': 'application/json',
+                ...getAuthorizationHeader()
+            },
             body: formData
         }).then(res => res.json())
         .then(res => {
