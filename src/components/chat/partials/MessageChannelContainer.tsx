@@ -13,15 +13,11 @@ export function MessageChannelContainer({ destinationUser }: PropsType) {
     const { user } = useContext(AuthContext)
     const [messages, setMessages] = useState<MessageType[]>([]);
 
-    useEffect(() => {
-        if (socket) {
-            socket.on(`channel:user:${user.id}`, (message: MessageType) => {
-                setMessages((pregState) => {
-                    return [...pregState, message]
-                });
-            })
-        }
-    }, [])
+    socket.on(`channel:user:${user.id}`, (message: MessageType) => {
+        setMessages((pregState) => {
+            return [...pregState, message]
+        });
+    })
 
     return (
         <div className="messages-box">

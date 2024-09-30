@@ -5,6 +5,7 @@ import { useContext, useEffect, useState } from "react"
 import { MessageType } from "./Message"
 import { usePathname } from "next/navigation"
 import { AuthContext } from "@/contexts/AuthContext"
+import { ChatContext } from "../ChatContext"
 
 type UserCardType = {
     user: User
@@ -14,22 +15,20 @@ export function UserCard({ user, onClick }: UserCardType) {
     const pathname = usePathname()
     const [count, setCount] = useState(0);
     const [hasSendMessages, setHasSendMessages] = useState(false);
-    const { socket } = useSocket()
+    const { socket } = useContext(ChatContext)
     const currentUser = useContext(AuthContext).user
 
     useEffect(() => {
-        if (socket) {
-            socket.on(`channel:user:${currentUser.id}`, (message: MessageType) => {
-                if(user.id === message.from.id) {
-                    setHasSendMessages(true)                   
-                
-                    setCount((prevState) => {
-                        return prevState + 1
-                    });
-                }
-            })
-        }
-    }, [])
+        socket.on(`channel:user:${currentUser.id}`, (message: MessageType) => {
+            if(user.id === message.from.id) {
+                setHasSendMessages(true)                   
+            
+                setCount((prevState) => {
+                    return prevState + 1
+                });
+            }
+        })
+    }, [count])
 
     const isUserChannel = pathname === '/channel/'+user.id
     

@@ -15,22 +15,16 @@ export function Chat() {
     const { socket } = useSocket();
     const { register, handleSubmit, resetField } = useForm()
 
+
     useEffect(() => {
-        if (user) {
-            socket?.on('connect', () => {
-
-                socket.emit('user.connect', user)
-
-            })
-
-            return () => {
-                // socket?.disconnect()
-            }
-        }
+        socket.emit('user.connect', user)
     }, [])
 
     const onSubmit = handleSubmit(async data => {
-        socket.emit('message', data['input-message']);
+        socket.emit('message', {
+            from: user,
+            message: data['input-message']
+         });
         resetField('input-message');
     })
 
