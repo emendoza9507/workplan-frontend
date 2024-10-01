@@ -14,9 +14,7 @@ export function MessageChannelContainer({ destinationUser }: PropsType) {
     const [messages, setMessages] = useState<MessageType[]>([]);
 
     socket.on(`channel:user:${user.id}`, (message: MessageType) => {
-        setMessages((pregState) => {
-            return [...pregState, message]
-        });
+        setMessages([...messages, message]);
     })
 
     return (

@@ -5,28 +5,28 @@ import { useContext, useEffect } from "react"
 import { ChatContext } from "./ChatContext"
 import { useForm } from "react-hook-form"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs"
-import { UserCheck, Users } from "lucide-react"
+import { ArrowLeft, UserCheck, Users } from "lucide-react"
 import UsersConnected from "./partials/UsersConnected"
 import { UsersAll } from "./partials/UsersAll"
 import { MessageChannelContainer } from "./partials/MessageChannelContainer"
 import { AvatarImg } from "./partials/AvatarImg"
+import { useRouter } from "next/navigation"
+import { chatService } from "@/services"
 
 type ChatChannelType = {
     destinationUser: User
 }
 export function ChatChannel({ destinationUser }: ChatChannelType) {
-    const currentUser = useContext(AuthContext).user
-    const { register, handleSubmit, resetField } = useForm()
-    const { socket } = useSocket()
+    const router = useRouter();
+    const currentUser = useContext(AuthContext).user;
+    const { register, handleSubmit, resetField } = useForm();
+    const { socket } = useSocket();
 
-    useEffect(() => {
-        
-        if (currentUser) {
-            socket?.on('connect', () => {                
-
-                // socket.emit('user.connect', currentUser)
-
-            })            
+    useEffect(() => {        
+        if (currentUser) {     
+            chatService.findOrCreate([currentUser, destinationUser]).then(res => {
+                console.log(res)
+            })
 
             return () => {
                 socket?.removeAllListeners()
@@ -63,7 +63,10 @@ export function ChatChannel({ destinationUser }: ChatChannelType) {
                     </div>
                 </div>
                 <div className="grid grid-cols-1 grid-rows-[50px_1fr_50px] gap-3">
-                    <header className="border-b">
+                    <header className="border-b flex">
+                        <button onClick={() => router.push('/')} className="pr-2">   
+                            <ArrowLeft/>
+                        </button>
                         <div className="flex gap-1 items-center">
                             <AvatarImg user={destinationUser} />
                             <h3 className="font-medium">{destinationUser.name} {destinationUser.lastname}</h3>

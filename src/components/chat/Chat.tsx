@@ -38,13 +38,15 @@ export function Chat() {
         <ChatContext.Provider value={{ socket: socket }}>
             <div className="grid grid-cols-[300px_1fr] gap-3 h-[calc(100vh-110px)]">
                 <div className="w-[300px] border-r">
-                    <div className="max-h-screen overflow-y-auto no-scrollbar pr-1">
-                        <Tabs defaultValue="onlines" className="w-full">
-                            <TabsList className="grid w-full grid-cols-2">
+                    <div className="pr-1">
+                        <Tabs defaultValue="onlines" className="w-full max-h-[calc(100vh-110px)] overflow-y-auto no-scrollbar">
+                            <TabsList className="grid sticky top-0 z-10 w-full grid-cols-2">
                                 <TabsTrigger value="onlines"><UserCheck size={18}/> En linea</TabsTrigger>
                                 <TabsTrigger value="all"><Users size={18}/> Todos</TabsTrigger>
                             </TabsList>
-                            <TabsContent value="onlines"><UsersConnected /></TabsContent>
+                            <TabsContent value="onlines" className="">
+                                <UsersConnected />
+                            </TabsContent>
                             <TabsContent value="all"><UsersAll/></TabsContent>
                         </Tabs>                        
                     </div>

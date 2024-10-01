@@ -1,7 +1,7 @@
 import { getAuthorizationHeader } from "@/lib/utils"
 import { User } from "@/types/user"
 
-export default class AuthSerice {
+export class AuthSerice {
     public constructor(private url: string) {
 
     }
