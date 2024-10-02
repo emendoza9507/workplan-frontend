@@ -13,8 +13,12 @@ export function MessageChannelContainer({ destinationUser }: PropsType) {
     const { user } = useContext(AuthContext)
     const [messages, setMessages] = useState<MessageType[]>([]);
 
-    socket.on(`channel:user:${user.id}`, (message: MessageType) => {
+    socket?.on(`channel:user:${user.id}`, (message: MessageType) => {
         setMessages([...messages, message]);
+    })
+
+    socket?.on(`chat:resive:message`, (message: MessageType) => {
+        console.log(message)
     })
 
     return (

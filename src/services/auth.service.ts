@@ -28,6 +28,14 @@ export class AuthSerice {
         })
     }
 
+    signUp = (user: User) => {
+        return fetch(`${this.url}/api/auth/signup`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(user)
+        }).then(res => res.json());
+    }
+
     getMe = (userId: string) => {
         return fetch(`${this.url}/api/users/${userId}`, {
             headers: {

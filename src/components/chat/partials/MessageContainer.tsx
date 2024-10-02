@@ -11,6 +11,7 @@ export default function MessageContainer() {
 
     socket.on('message:new', (message: MessageType) => {
         setMessages([...messages, message]);
+        scrollTo({top: -1})
     })
 
     return (

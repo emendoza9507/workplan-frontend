@@ -12,7 +12,8 @@ export default function UsersConnected() {
     const [users, setUsers] = useState<User[]>([]);
 
     useEffect(() => {
-        socket?.on('user.connect', (newUser) => {
+        socket?.on('user.connect', (newUser, ...args) => {
+            console.log(args)
             if (newUser.id !== user?.id) {
                 setUsers((pregState) => {
                     return [...pregState, newUser];
@@ -20,16 +21,16 @@ export default function UsersConnected() {
             }
         })
 
-        socket?.on('user.disconnect', (id) => {
-            setUsers(users.filter((user) => user.socketId !== id))
+        socket?.on('user.disconnect', (userDisconnected) => {
+            // console.log(userDisconnected)
         })
 
-        getConnectedUsers(socket, (usersList) => {
-            setUsers(usersList.filter(u => u.id !== user?.id))
-        })
+        // getConnectedUsers(socket, (usersList) => {
+        //     setUsers(usersList.filter(u => u.id !== user?.id))
+        // })
 
         return () => {
-            socket.removeAllListeners()
+            // socket.removeAllListeners()
         }
     }, []);
 
@@ -37,6 +38,7 @@ export default function UsersConnected() {
     return users.map((user: User, i) => (
         <Link href={"/channel/"+user.id} key={`${user.id}${i}`}>
             <UserCard online user={user}/>
+            {user.socketId}
         </Link>
     ))
 }

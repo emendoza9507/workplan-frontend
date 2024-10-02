@@ -1,7 +1,7 @@
 import { AuthContext } from "@/contexts/AuthContext"
 import { useSocket } from "@/hooks/socket/useSocket"
 import { User } from "@/types/user"
-import { useContext, useEffect } from "react"
+import { useContext, useEffect, useState } from "react"
 import { ChatContext } from "./ChatContext"
 import { useForm } from "react-hook-form"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs"
@@ -21,11 +21,12 @@ export function ChatChannel({ destinationUser }: ChatChannelType) {
     const currentUser = useContext(AuthContext).user;
     const { register, handleSubmit, resetField } = useForm();
     const { socket } = useSocket();
+    const [chat, setChat] = useState<any>();
 
     useEffect(() => {        
         if (currentUser) {     
-            chatService.findOrCreate([currentUser, destinationUser]).then(res => {
-                console.log(res)
+            chatService.findOrCreate([currentUser, destinationUser]).then(chat => {
+                setChat(chat)
             })
 
             return () => {
@@ -34,10 +35,15 @@ export function ChatChannel({ destinationUser }: ChatChannelType) {
         }
     }, [currentUser])
 
-    socket?.emit('user.connect', currentUser)
+    useEffect(() => {
+        if(chat) {
+            socket?.emit('chat:join', chat.id)
+        }
+    }, [chat])
 
     const onSubmit = handleSubmit(async data => {
-        socket.emit('channel:message', { to: destinationUser.id, from: currentUser.id, message: data['input-message'] });
+        // socket?.emit('channel:message', { to: destinationUser.id, from: currentUser.id, message: data['input-message'] });
+        socket?.emit('chat:send:message', { chatId: chat.id, userId: currentUser.id, text: data['input-message'] })
         resetField('input-message');
     })
 

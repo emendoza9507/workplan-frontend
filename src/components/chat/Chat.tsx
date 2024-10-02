@@ -51,9 +51,9 @@ export function Chat() {
                         </Tabs>                        
                     </div>
                 </div>
-                <div className="grid grid-cols-1 grid-rows-[1fr_50px] gap-3">
+                <div className="grid grid-cols-1 max-h-[calc(100vh-110px)] overflow-y-auto no-scrollbar grid-rows-[1fr_50px] gap-3">
                     <MessageContainer/>
-                    <div className="grid w-full gap-2 message-input">
+                    <div className="grid w-full gap-2 message-input sticky bg-white z-50 bottom-0">
                         <div className="w-full pl-3 pr-1 py-1 rounded-3xl border border-gray-200 items-center gap-2 inline-flex justify-between">
                             <div className="flex w-full items-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
