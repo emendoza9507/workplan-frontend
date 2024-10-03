@@ -14,14 +14,12 @@ export function UsersAll() {
     const [onlineUsers, setOnlineUsers] = useState<User[]>([])
 
     useEffect(() => {
-        getConnectedUsers(socket, setOnlineUsers)
+        // getConnectedUsers(socket, setOnlineUsers)
     }, [])
 
     useEffect(() => {
-        if(user) {
-            userService.getAll().then((users: User[]) => setUsers(users.filter(u => u.id !== user?.id)))
-        }
-    }, [user])
+        userService.getAll().then((users: User[]) => setUsers(users.filter(u => u.id !== user?.id)))
+    }, [])
 
     const isOnline = (user: User) => {
         return !!onlineUsers.find(u => u.id === user.id)

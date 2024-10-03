@@ -22,28 +22,38 @@ export function ChatChannel({ destinationUser }: ChatChannelType) {
     const { register, handleSubmit, resetField } = useForm();
     const { socket } = useSocket();
     const [chat, setChat] = useState<any>();
+    const { setConnectedUsers, UsersConnectedView }  = UsersConnected();
 
-    useEffect(() => {        
-        if (currentUser) {     
-            chatService.findOrCreate([currentUser, destinationUser]).then(chat => {
-                console.log(chat)
-                setChat(chat)
-            })
+    useEffect(() => {     
+        socket?.on('join.global', (users: [string, User][]) => {    
+            console.log('entrp')       
+            setConnectedUsers(users.filter(([socket, u]) => u.id !== currentUser.id))
+        })
 
-            return () => {
-                socket?.removeAllListeners()
-            }
+        socket?.on('out.global', (users: [string, User][]) => {
+            setConnectedUsers(users.filter(([socket, u]) => u.id !== currentUser.id))
+        })
+
+        chatService.findOrCreate([currentUser, destinationUser]).then(chat => {
+            setChat(chat)
+        });        
+
+        socket.emit('join.global', currentUser);
+
+        return () => {
+            socket.removeAllListeners()
         }
-    }, [currentUser])
+    }, [])
 
     useEffect(() => {
-        if(chat) {
+        if (chat) {
             socket?.emit('chat:join', chat.id)
         }
     }, [chat])
 
     const onSubmit = handleSubmit(async data => {
         // socket?.emit('channel:message', { to: destinationUser.id, from: currentUser.id, message: data['input-message'] });
+        if(data['input-message'])
         socket?.emit('chat:send:message', { chatId: chat.id, userId: currentUser.id, text: data['input-message'] })
         resetField('input-message');
     })
@@ -64,22 +74,22 @@ export function ChatChannel({ destinationUser }: ChatChannelType) {
                                 <TabsTrigger value="onlines"><UserCheck size={18} /> En linea</TabsTrigger>
                                 <TabsTrigger value="all"><Users size={18} /> Todos</TabsTrigger>
                             </TabsList>
-                            <TabsContent value="onlines"><UsersConnected /></TabsContent>
+                            <TabsContent value="onlines"><UsersConnectedView /></TabsContent>
                             <TabsContent value="all"><UsersAll /></TabsContent>
                         </Tabs>
                     </div>
                 </div>
                 <div className="grid  grid-cols-1 max-h-[calc(100vh-110px)] overflow-y-auto no-scrollbar grid-rows-[50px_1fr_50px] gap-3">
                     <header className="border-b sticky top-0 z-10 bg-white flex">
-                        <button onClick={() => router.push('/')} className="pr-2">   
-                            <ArrowLeft/>
+                        <button onClick={() => router.push('/')} className="pr-2">
+                            <ArrowLeft />
                         </button>
                         <div className="flex gap-1 items-center">
                             <AvatarImg user={destinationUser} />
                             <h3 className="font-medium">{destinationUser.name} {destinationUser.lastname}</h3>
                         </div>
                     </header>
-                    <MessageChannelContainer chat={chat} />
+                    { <MessageChannelContainer chat={chat} />}
                     <div className="grid w-full gap-2 sticky bg-white z-50 bottom-0 message-input">
                         <div className="w-full pl-3 pr-1 py-1 rounded-3xl border border-gray-200 items-center gap-2 inline-flex justify-between">
                             <div className="flex w-full items-center gap-2">

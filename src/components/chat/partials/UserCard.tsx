@@ -19,17 +19,17 @@ export function UserCard({ user, online, onClick }: UserCardType) {
     const { socket } = useContext(ChatContext)
     const currentUser = useContext(AuthContext).user
 
-    useEffect(() => {
-        socket.on(`channel:user:${currentUser.id}`, (message: MessageType) => {
-            if(user.id === message.from.id) {
-                setHasSendMessages(true)                   
-            
-                setCount((prevState) => {
-                    return prevState + 1
-                });
-            }
-        })
-    }, [count])
+    const resiveMessage = (message: any) => {
+        console.log(message)
+    }
+
+    useEffect(() => { 
+        socket.on('chat:resive:notification', resiveMessage)
+
+        return () => {
+            socket.removeAllListeners()
+        }
+    }, [])
 
     const isUserChannel = pathname === '/channel/'+user.id
     
