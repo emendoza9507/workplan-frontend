@@ -17,7 +17,7 @@ export function Chat() {
 
 
     useEffect(() => {
-        socket.emit('user.connect', user)
+        socket.emit('join.global', user)
     }, [])
 
     const onSubmit = handleSubmit(async data => {

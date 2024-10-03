@@ -9,24 +9,27 @@ import { getConnectedUsers } from "../utils/getConnectedUsers";
 export default function UsersConnected() {
     const { user } = useContext(AuthContext);
     const { socket } = useContext(ChatContext);
-    const [users, setUsers] = useState<User[]>([]);
+    const [users, setUsers] = useState<[string, User][]>([]);
 
     useEffect(() => {
-        socket?.on('user.connect', (newUser, ...args) => {
-            console.log(args)
-            if (newUser.id !== user?.id) {
-                setUsers((pregState) => {
-                    return [...pregState, newUser];
-                }) 
-            }
+        // socket?.on('user.connect', (newUser) => {
+        //     if (newUser[1].id !== user?.id) {
+        //         setUsers((pregState) => {
+        //             return [...pregState, newUser];
+        //         })
+        //     }
+        // })
+
+        socket?.on('join.global', (users: [string, User][]) => {           
+            setUsers(users.filter(([socket, u]) => u.id !== user.id))
         })
 
-        socket?.on('user.disconnect', (userDisconnected) => {
-            // console.log(userDisconnected)
+        socket?.on('out.global', (users: [string, User][]) => {
+            setUsers(users.filter(([socket, u]) => u.id !== user.id))
         })
 
         // getConnectedUsers(socket, (usersList) => {
-        //     setUsers(usersList.filter(u => u.id !== user?.id))
+        //     setUsers(usersList.filter(([socketId, u]) => u.id !== user?.id))
         // })
 
         return () => {
@@ -35,10 +38,11 @@ export default function UsersConnected() {
     }, []);
 
 
-    return users.map((user: User, i) => (
-        <Link href={"/channel/"+user.id} key={`${user.id}${i}`}>
-            <UserCard online user={user}/>
-            {user.socketId}
+
+    return users.map(([socketId, user], i) => (
+        <Link href={"/channel/" + user.id} key={`${user.id}${i}`}>
+            <UserCard online user={user} />
+            {socketId}
         </Link>
     ))
 }

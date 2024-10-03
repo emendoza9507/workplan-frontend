@@ -26,6 +26,7 @@ export function ChatChannel({ destinationUser }: ChatChannelType) {
     useEffect(() => {        
         if (currentUser) {     
             chatService.findOrCreate([currentUser, destinationUser]).then(chat => {
+                console.log(chat)
                 setChat(chat)
             })
 
@@ -57,9 +58,9 @@ export function ChatChannel({ destinationUser }: ChatChannelType) {
         <ChatContext.Provider value={{ socket }}>
             <div className="grid grid-cols-[300px_1fr] gap-3 h-[calc(100vh-110px)]">
                 <div className="w-[300px] border-r">
-                    <div className="max-h-screen overflow-y-auto no-scrollbar pr-1">
+                    <div className="max-h-[calc(100vh-110px)] overflow-y-auto no-scrollbar pr-1">
                         <Tabs defaultValue="onlines" className="w-full">
-                            <TabsList className="grid w-full grid-cols-2">
+                            <TabsList className="grid sticky top-0 z-10 w-full grid-cols-2">
                                 <TabsTrigger value="onlines"><UserCheck size={18} /> En linea</TabsTrigger>
                                 <TabsTrigger value="all"><Users size={18} /> Todos</TabsTrigger>
                             </TabsList>
@@ -68,8 +69,8 @@ export function ChatChannel({ destinationUser }: ChatChannelType) {
                         </Tabs>
                     </div>
                 </div>
-                <div className="grid grid-cols-1 grid-rows-[50px_1fr_50px] gap-3">
-                    <header className="border-b flex">
+                <div className="grid  grid-cols-1 max-h-[calc(100vh-110px)] overflow-y-auto no-scrollbar grid-rows-[50px_1fr_50px] gap-3">
+                    <header className="border-b sticky top-0 z-10 bg-white flex">
                         <button onClick={() => router.push('/')} className="pr-2">   
                             <ArrowLeft/>
                         </button>
@@ -78,8 +79,8 @@ export function ChatChannel({ destinationUser }: ChatChannelType) {
                             <h3 className="font-medium">{destinationUser.name} {destinationUser.lastname}</h3>
                         </div>
                     </header>
-                    <MessageChannelContainer destinationUser={destinationUser} />
-                    <div className="grid w-full gap-2 message-input">
+                    <MessageChannelContainer chat={chat} />
+                    <div className="grid w-full gap-2 sticky bg-white z-50 bottom-0 message-input">
                         <div className="w-full pl-3 pr-1 py-1 rounded-3xl border border-gray-200 items-center gap-2 inline-flex justify-between">
                             <div className="flex w-full items-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
