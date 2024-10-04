@@ -1,11 +1,19 @@
 import { User } from "@/types/user"
 import { User2 } from "lucide-react"
 import { useContext, useEffect, useState } from "react"
-import { MessageType } from "./Message"
 import { usePathname } from "next/navigation"
 import { AuthContext } from "@/contexts/AuthContext"
 import { ChatContext } from "../ChatContext"
 import { cn } from "@/lib/utils"
+import { useLocalStorage } from "@/hooks/useLocalStorage"
+
+type MessageType = {
+    id: string
+    chatId: string
+    createdAt: string
+    sender: User
+    text: string
+}
 
 type UserCardType = {
     user: User
@@ -14,20 +22,23 @@ type UserCardType = {
 }
 export function UserCard({ user, online, onClick }: UserCardType) {
     const pathname = usePathname()
-    const [count, setCount] = useState(0);
-    const [hasSendMessages, setHasSendMessages] = useState(false);
+    const [count, setCount] = useLocalStorage(`notification:user:${user.id}`, 0);
+    const [hasSendMessages, setHasSendMessages] = useState(+count > 0);
     const { socket } = useContext(ChatContext)
     const currentUser = useContext(AuthContext).user
 
-    const resiveMessage = (message: any) => {
-        console.log(message)
+    const resiveMessage = (message: MessageType) => {
+        if(message.sender.id === user.id) {
+            setCount((prevCount: any) => prevCount + 1)
+            setHasSendMessages(true)
+        }
     }
 
     useEffect(() => { 
         socket.on('chat:resive:notification', resiveMessage)
 
         return () => {
-            socket.removeAllListeners()
+            socket.removeListener('chat:resive:notification', resiveMessage)
         }
     }, [])
 

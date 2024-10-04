@@ -16,4 +16,13 @@ export default class ChatService {
             })
         }).then(res => res.json())
     }
+
+    findById(id: number, page: number) {
+        return fetch(`${this.url}/api/chats/${id}?page=${page}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                ...getAuthorizationHeader()
+            }
+        }).then(res => res.json())
+    }
 }

@@ -1,7 +1,7 @@
 import { AuthContext } from "@/contexts/AuthContext"
 import { useSocket } from "@/hooks/socket/useSocket"
 import { User } from "@/types/user"
-import { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import { ChatContext } from "./ChatContext"
 import { useForm } from "react-hook-form"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs"
@@ -26,7 +26,6 @@ export function ChatChannel({ destinationUser }: ChatChannelType) {
 
     useEffect(() => {     
         socket?.on('join.global', (users: [string, User][]) => {    
-            console.log('entrp')       
             setConnectedUsers(users.filter(([socket, u]) => u.id !== currentUser.id))
         })
 
@@ -41,7 +40,7 @@ export function ChatChannel({ destinationUser }: ChatChannelType) {
         socket.emit('join.global', currentUser);
 
         return () => {
-            socket.removeAllListeners()
+            // socket.removeAllListeners()
         }
     }, [])
 
