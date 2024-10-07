@@ -24,18 +24,9 @@ export function ChatChannel({ destinationUser }: ChatChannelType) {
     const { socket } = useSocket();
     const [ notigications, setNotifications ] = useLocalStorage(`notification:user:${destinationUser.id}`, 0)
     const [chat, setChat] = useState<any>();
-    const { setConnectedUsers, UsersConnectedView }  = UsersConnected();
 
     useEffect(() => {  
         setNotifications(0)
-        
-        socket?.on('join.global', (users: [string, User][]) => {    
-            setConnectedUsers(users.filter(([socket, u]) => u.id !== currentUser.id))
-        })
-
-        socket?.on('out.global', (users: [string, User][]) => {
-            setConnectedUsers(users.filter(([socket, u]) => u.id !== currentUser.id))
-        })
 
         chatService.findOrCreate([currentUser, destinationUser]).then(chat => {
             setChat(chat)
@@ -78,7 +69,7 @@ export function ChatChannel({ destinationUser }: ChatChannelType) {
                                 <TabsTrigger value="onlines"><UserCheck size={18} /> En linea</TabsTrigger>
                                 <TabsTrigger value="all"><Users size={18} /> Todos</TabsTrigger>
                             </TabsList>
-                            <TabsContent value="onlines"><UsersConnectedView /></TabsContent>
+                            <TabsContent value="onlines"><UsersConnected /></TabsContent>
                             <TabsContent value="all"><UsersAll /></TabsContent>
                         </Tabs>
                     </div>

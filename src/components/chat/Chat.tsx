@@ -9,24 +9,13 @@ import { useForm } from "react-hook-form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { UserCheck, Users } from "lucide-react";
 import { UsersAll } from "./partials/UsersAll";
-import { User } from "@/types/user";
 
 export function Chat() {
     const { user } = useContext(AuthContext)
     const { socket } = useSocket();
-    const { register, handleSubmit, resetField } = useForm()
-    const { setConnectedUsers, UsersConnectedView }  = UsersConnected();
-
+    const { register, handleSubmit, resetField } = useForm();
 
     useEffect(() => {
-        socket?.on('join.global', (users: [string, User][]) => {           
-            setConnectedUsers(users.filter(([socket, u]) => u.id !== user.id))
-        })
-
-        socket?.on('out.global', (users: [string, User][]) => {
-            setConnectedUsers(users.filter(([socket, u]) => u.id !== user.id))
-        })
-
         socket.emit('join.global', user)
     }, [])
 
@@ -55,7 +44,7 @@ export function Chat() {
                                 <TabsTrigger value="all"><Users size={18}/> Todos</TabsTrigger>
                             </TabsList>
                             <TabsContent value="onlines" className="">
-                                <UsersConnectedView />
+                                <UsersConnected />
                             </TabsContent>
                             <TabsContent value="all"><UsersAll/></TabsContent>
                         </Tabs>                        
