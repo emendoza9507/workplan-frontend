@@ -12,6 +12,7 @@ import { MessageChannelContainer } from "./partials/MessageChannelContainer"
 import { AvatarImg } from "./partials/AvatarImg"
 import { useRouter } from "next/navigation"
 import { chatService } from "@/services"
+import { useLocalStorage } from "@/hooks/useLocalStorage"
 
 type ChatChannelType = {
     destinationUser: User
@@ -21,10 +22,13 @@ export function ChatChannel({ destinationUser }: ChatChannelType) {
     const currentUser = useContext(AuthContext).user;
     const { register, handleSubmit, resetField } = useForm();
     const { socket } = useSocket();
+    const [ notigications, setNotifications ] = useLocalStorage(`notification:user:${destinationUser.id}`, 0)
     const [chat, setChat] = useState<any>();
     const { setConnectedUsers, UsersConnectedView }  = UsersConnected();
 
-    useEffect(() => {     
+    useEffect(() => {  
+        setNotifications(0)
+        
         socket?.on('join.global', (users: [string, User][]) => {    
             setConnectedUsers(users.filter(([socket, u]) => u.id !== currentUser.id))
         })
@@ -62,6 +66,7 @@ export function ChatChannel({ destinationUser }: ChatChannelType) {
             onSubmit();
         }
     }
+
 
     return (
         <ChatContext.Provider value={{ socket }}>

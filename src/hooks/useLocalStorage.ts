@@ -17,10 +17,10 @@ export function useLocalStorage<T>(key: string, defaultValue: T | (() => T) ) {
         }
     });
 
-    function setLocalStorageStateValue(valueOrFn: T) {
+    function setLocalStorageStateValue(valueOrFn: T | ((v: T) => T)) {
         let newValue = valueOrFn as T;
         if(typeof valueOrFn === 'function') {
-            const fn = valueOrFn
+            const fn = valueOrFn as Function
             newValue = fn(localStorageValue);
         } 
 
@@ -28,5 +28,5 @@ export function useLocalStorage<T>(key: string, defaultValue: T | (() => T) ) {
         setLocalStorageValue(newValue);
     }
 
-    return [localStorageValue, setLocalStorageStateValue];
+    return [localStorageValue, setLocalStorageStateValue] as const;
 }

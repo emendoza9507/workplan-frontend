@@ -29,8 +29,7 @@ export function UserCard({ user, online, onClick }: UserCardType) {
 
     const resiveMessage = (message: MessageType) => {
         if(message.sender.id === user.id) {
-            setCount((prevCount: any) => prevCount + 1)
-            setHasSendMessages(true)
+            setCount((prevCount: number) => prevCount + 1)
         }
     }
 
